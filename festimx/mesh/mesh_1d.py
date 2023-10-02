@@ -1,9 +1,8 @@
 from dolfinx import fem, mesh
 from mpi4py import MPI
 import ufl
-from festimx import Mesh
-
 import numpy as np
+from festimx import Mesh
 
 
 class Mesh1D(Mesh):
@@ -39,8 +38,10 @@ class Mesh1D(Mesh):
         domain = ufl.Mesh(ufl.VectorElement("Lagrange", cell, degree))
 
         x = np.array(self.vertices)
+        x = np.reshape(x, (len(x), 1))
         indexes = np.arange(x.shape[0])
         cells = np.stack((indexes[:-1], indexes[1:]), axis=-1)
+
         return mesh.create_mesh(MPI.COMM_WORLD, cells, x, domain)
 
     def define_surface_markers(self):
